@@ -8,7 +8,8 @@
     "libraries/testskills/*",
     "testing/*",
     "tools",
-    "transcripts"
+    "transcripts",
+    "contoso/*"
   ],
   "scripts": {
     "browser-functional-test": "yarn workspace browser-functional-tests test",
