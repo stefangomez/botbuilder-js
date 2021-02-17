@@ -1,0 +1,20 @@
+{
+  "name": "contoso-components",
+  "private": true,
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo"
+  },
+  "dependencies": {
+    "adaptive-expressions": "4.1.6",
+    "botbuilder": "4.1.6",
+    "botbuilder-dialogs": "4.1.6",
+    "botbuilder-dialogs-declarative": "4.1.6",
+    "botbuilder-runtime-core": "4.1.6",
+    "runtypes": "^5.0.1"
+  }
+}
