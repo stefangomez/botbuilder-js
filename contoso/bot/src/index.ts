@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { start } from 'botbuilder-runtime-integration-restify';
+import { start } from 'botbuilder-runtime-integration-express';
 
-start(process.cwd(), process.cwd()).catch(console.error);
+start(process.cwd(), process.cwd(), {
+    port: 3979,
+}).catch(console.error);

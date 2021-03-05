@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "botbuilder-runtime-core": "4.1.6",
-    "botbuilder-runtime-integration-restify": "4.1.6",
+    "botbuilder-runtime-integration-express": "4.1.6",
     "contoso-components": "0.0.0"
   }
 }
