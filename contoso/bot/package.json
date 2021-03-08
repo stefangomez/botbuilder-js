@@ -6,6 +6,9 @@
   "typings": "lib/index.d.ts",
   "license": "MIT",
   "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf lib tsconfig.tsbuildinfo",
+    "lint": "eslint . --ext .js,.ts",
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
