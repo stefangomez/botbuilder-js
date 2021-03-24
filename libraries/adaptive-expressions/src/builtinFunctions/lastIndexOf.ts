@@ -37,8 +37,8 @@ export class LastIndexOf extends ExpressionEvaluator {
         if (!error) {
             const firstChild = args[0];
             const secondChild = args[1];
-            if (firstChild === undefined || typeof firstChild === 'string') {
-                if (secondChild === undefined || typeof secondChild === 'string') {
+            if (firstChild == null || typeof firstChild === 'string') {
+                if (secondChild == null || typeof secondChild === 'string') {
                     const str = InternalFunctionUtils.parseStringOrUndefined(firstChild);
                     const searchValue = InternalFunctionUtils.parseStringOrUndefined(secondChild);
                     value = str.lastIndexOf(searchValue, str.length - 1);

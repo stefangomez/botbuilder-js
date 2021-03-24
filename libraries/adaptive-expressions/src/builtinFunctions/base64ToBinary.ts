@@ -12,7 +12,7 @@ import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
-import atob = require('atob-lite');
+import atob from 'atob-lite';
 
 /**
  * Return the binary array of a base64-encoded string.
@@ -35,8 +35,8 @@ export class Base64ToBinary extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: readonly string[]): Uint8Array => {
-            const raw = atob(args[0]);
-            return InternalFunctionUtils.toBinary(raw);
+            const raw = atob(args[0].toString());
+            return InternalFunctionUtils.getTextEncoder().encode(raw);
         }, FunctionUtils.verifyString);
     }
 }

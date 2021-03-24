@@ -7,9 +7,10 @@
  */
 
 import { Activity, ActivityTypes, RecognizerResult } from 'botbuilder-core';
-import { DialogContext, Recognizer } from 'botbuilder-dialogs';
+import { DialogContext } from 'botbuilder-dialogs';
+import { AdaptiveRecognizer } from './adaptiveRecognizer';
 
-export class ValueRecognizer extends Recognizer {
+export class ValueRecognizer extends AdaptiveRecognizer {
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,
@@ -40,7 +41,7 @@ export class ValueRecognizer extends Recognizer {
         this.trackRecognizerResult(
             dialogContext,
             'ValueRecognizerResult',
-            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
             telemetryMetrics
         );
 

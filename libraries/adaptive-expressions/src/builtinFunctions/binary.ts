@@ -28,7 +28,7 @@ export class Binary extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: readonly string[]): Uint8Array => InternalFunctionUtils.toBinary(args[0]),
+            (args: readonly string[]): Uint8Array => InternalFunctionUtils.getTextEncoder().encode(args[0]),
             FunctionUtils.verifyString
         );
     }

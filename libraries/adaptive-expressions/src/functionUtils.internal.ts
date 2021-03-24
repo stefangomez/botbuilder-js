@@ -59,20 +59,6 @@ export class InternalFunctionUtils {
     }
 
     /**
-     * Convert string into Uint8Array object.
-     * @param stringToConvert Input string.
-     */
-    public static toBinary(stringToConvert: string): Uint8Array {
-        const result = new ArrayBuffer(stringToConvert.length);
-        const bufferView = new Uint8Array(result);
-        for (let i = 0; i < stringToConvert.length; i++) {
-            bufferView[i] = stringToConvert.charCodeAt(i);
-        }
-
-        return bufferView;
-    }
-
-    /**
      * Sort helper function.
      * @param isDescending Descending flag.
      */
@@ -83,6 +69,7 @@ export class InternalFunctionUtils {
             let error = childrenError;
             if (!error) {
                 if (Array.isArray(oriArr)) {
+                    // Ensures we don't mutate the array in place.
                     const arr: unknown[] = oriArr.slice(0);
                     if (expression.children.length === 1) {
                         if (isDescending) {
@@ -98,13 +85,10 @@ export class InternalFunctionUtils {
                             propertyName = String(child1.value) || '';
                         }
 
-                        const sortBy = (key: string) => {
-                            return (a: unknown, b: unknown) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0);
-                        };
                         if (isDescending) {
-                            result = arr.concat().sort(sortBy(propertyName)).reverse();
+                            result = arr.sort(InternalFunctionUtils.sortByKey(propertyName)).reverse();
                         } else {
-                            result = arr.concat().sort(sortBy(propertyName));
+                            result = arr.sort(InternalFunctionUtils.sortByKey(propertyName));
                         }
                     }
                 } else {
@@ -268,7 +252,7 @@ export class InternalFunctionUtils {
      * Wrap string or undefined into string. Default to empty string.
      * @param input Input string
      */
-    public static parseStringOrUndefined(input: string | undefined): string {
+    public static parseStringOrUndefined(input: unknown): string {
         if (typeof input === 'string') {
             return input;
         } else {
@@ -453,12 +437,7 @@ export class InternalFunctionUtils {
             return firstItem == null && secondItem == null;
         }
 
-        if (
-            Array.isArray(firstItem) &&
-            firstItem.length === 0 &&
-            Array.isArray(secondItem) &&
-            secondItem.length === 0
-        ) {
+        if (Array.isArray(firstItem) && firstItem.length === 0 && Array.isArray(secondItem) && secondItem.length === 0) {
             return true;
         }
 
@@ -483,6 +462,30 @@ export class InternalFunctionUtils {
     }
 
     /**
+     * TextEncoder helper function.
+     */
+    public static getTextEncoder(): TextEncoder {
+        if (typeof window !== 'undefined' || typeof self !== 'undefined') {
+            return new TextEncoder();
+        }
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const util = require('util');
+        return new util.TextEncoder();
+    }
+
+    /**
+     * TextDecoder helper function.
+     */
+    public static getTextDecoder(code = 'utf-8'): TextDecoder {
+        if (typeof window !== 'undefined' || typeof self !== 'undefined') {
+            return new TextDecoder(code);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const util = require('util');
+        return new util.TextDecoder(code);
+    }
+
+    /**
      * Common Stringfy an object.
      * @param input input object.
      */
@@ -490,9 +493,7 @@ export class InternalFunctionUtils {
         if (input == null) {
             return '';
         }
-        if (Array.isArray(input)) {
-            return input.toString();
-        } else if (typeof input === 'object') {
+        if (typeof input === 'object') {
             return JSON.stringify(input)
                 .replace(/(^['"]*)/g, '')
                 .replace(/(['"]*$)/g, '');
@@ -516,5 +517,12 @@ export class InternalFunctionUtils {
         }
 
         return count;
+    }
+
+    /**
+     * @private
+     */
+    private static sortByKey(key: string) {
+        return (a: unknown, b: unknown) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0);
     }
 }

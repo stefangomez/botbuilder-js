@@ -6,19 +6,41 @@ import restify from 'restify';
 import { Configuration, getRuntimeServices } from 'botbuilder-runtime';
 import { IServices, ServiceCollection } from 'botbuilder-runtime-core';
 
-/**
- * Options for runtime restify adapter
- */
-export type Options = {
+const TypedOptions = t.Record({
+    /**
+     * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
+     */
+    messagingEndpointPath: t.String,
+
     /**
      * Port that server should listen on
      */
-    port: number;
-};
+    port: t.Union(t.String, t.Number),
+});
+
+/**
+ * Options for runtime restify adapter
+ */
+export type Options = t.Static<typeof TypedOptions>;
 
 const defaultOptions: Options = {
+    messagingEndpointPath: '/api/messages',
     port: 3978,
 };
+
+async function resolveOptions(options: Partial<Options>, configuration: Configuration): Promise<Options> {
+    const configOverrides: Partial<Options> = {};
+
+    const port = (await Promise.all(['port', 'PORT'].map((key) => configuration.string([key])))).find(
+        (port) => port !== undefined
+    );
+
+    if (port !== undefined) {
+        configOverrides.port = port;
+    }
+
+    return TypedOptions.check(Object.assign({}, defaultOptions, configOverrides, options));
+}
 
 /**
  * Start a bot using the runtime restify integration.
@@ -30,14 +52,15 @@ const defaultOptions: Options = {
 export async function start(
     applicationRoot: string,
     settingsDirectory: string,
-    options = defaultOptions
+    options: Partial<Options> = {}
 ): Promise<void> {
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
-    const server = await makeServer(services, configuration);
 
-    server.listen(options.port, () => {
-        console.log(`server listening on port ${options.port}`);
-    });
+    const resolvedOptions = await resolveOptions(options, configuration);
+
+    const server = await makeServer(services, configuration, resolvedOptions);
+
+    server.listen(resolvedOptions.port, () => console.log(`server listening on port ${resolvedOptions.port}`));
 }
 
 /**
@@ -45,17 +68,22 @@ export async function start(
  *
  * @param services runtime service collection
  * @param configuration runtime configuration
- * @returns a restify server ready to listen for connections
+ * @param options options bag for configuring restify Server
+ * @returns a restify Server ready to listen for connections
  */
 export async function makeServer(
     services: ServiceCollection<IServices>,
-    configuration: Configuration
+    configuration: Configuration,
+    options: Partial<Options> = {}
 ): Promise<restify.Server> {
-    const { adapter, bot, customAdapters } = await services.mustMakeInstances('adapter', 'bot', 'customAdapters');
+    const [{ adapter, bot, customAdapters }, resolvedOptions] = await Promise.all([
+        services.mustMakeInstances('adapter', 'bot', 'customAdapters'),
+        resolveOptions(options, configuration),
+    ]);
 
     const server = restify.createServer();
 
-    server.post('/api/messages', (req, res) => {
+    server.post(resolvedOptions.messagingEndpointPath, (req, res) => {
         adapter.processActivity(req, res, async (turnContext) => {
             await bot.run(turnContext);
         });

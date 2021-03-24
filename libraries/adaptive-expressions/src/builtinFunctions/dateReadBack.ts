@@ -43,7 +43,7 @@ export class DateReadBack extends ExpressionEvaluator {
                     return { value: timex.toNaturalLanguage(timestamp1), error };
                 }
             }
-            return { value: undefined, error: error };
+            return { value: undefined, error };
         }, FunctionUtils.verifyString);
     }
 

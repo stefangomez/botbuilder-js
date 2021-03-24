@@ -60,6 +60,8 @@ export class String extends ExpressionEvaluator {
                         }
                     } else if (firstChild instanceof Date) {
                         result = firstChild.toLocaleDateString(locale);
+                    } else if (firstChild instanceof Uint8Array) {
+                        result = InternalFunctionUtils.getTextDecoder().decode(firstChild);
                     } else {
                         result = InternalFunctionUtils.commonStringify(firstChild);
                     }

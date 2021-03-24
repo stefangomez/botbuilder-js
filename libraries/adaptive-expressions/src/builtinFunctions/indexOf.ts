@@ -37,8 +37,8 @@ export class IndexOf extends ExpressionEvaluator {
         if (!error) {
             const firstChild = args[0];
             const secondChild = args[1];
-            if (firstChild === undefined || typeof firstChild === 'string') {
-                if (secondChild === undefined || typeof secondChild === 'string') {
+            if (firstChild == null || typeof firstChild === 'string') {
+                if (secondChild == null || typeof secondChild === 'string') {
                     value = InternalFunctionUtils.parseStringOrUndefined(firstChild).indexOf(
                         InternalFunctionUtils.parseStringOrUndefined(secondChild)
                     );
