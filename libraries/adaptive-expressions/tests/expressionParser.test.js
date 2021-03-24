@@ -1018,6 +1018,14 @@ const generateParseTest = (input, expectedOutput, expectedRefs) => () => {
 }
 
 describe('expression parser functional test', () => {
+    testCases.forEach(({ label, testCases }) => {
+        describe(label, () => {
+            testCases.forEach(([input, expectedOutput, expectedRefs]) => {
+                it(input.toString() || '(empty)', generateParseTest(input, expectedOutput, expectedRefs));
+            });
+        });
+    });
+
     describe('StackedMemory', () => {
         it('supports null values', () => {
             const sm = new StackedMemory();
