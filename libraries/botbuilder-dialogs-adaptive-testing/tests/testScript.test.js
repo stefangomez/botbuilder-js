@@ -1,8 +1,11 @@
 const assert = require('assert');
 const path = require('path');
-const { ComponentRegistration } = require('botbuilder-core');
 const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { ComponentRegistration } = require('botbuilder-core');
+const { LuisAdaptiveRecognizer } = require('botbuilder-ai');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
+const { mochaExt } = require('botbuilder-test-utils');
+
 const {
     AdaptiveTestComponentRegistration,
     MockLuisLoader,
@@ -10,7 +13,6 @@ const {
     TestUtils,
     useMockLuisSettings,
 } = require('../lib');
-const { LuisAdaptiveRecognizer } = require('botbuilder-ai');
 
 describe('TestScriptTests', function () {
     this.timeout(5000);
@@ -116,18 +118,14 @@ describe('TestScriptTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_OAuthInputRetries_WithNullMessageText');
     });
 
-    it('PropertyMock', async () => {
-        const origFile = process.env.file;
-        process.env.file = 'set settings.file';
+    describe('overridden file', function () {
+        mochaExt.withEnvironment({
+            file: 'set settings.file',
+        });
 
-        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_PropertyMock');
-
-        // Cleanup, restoring original process.env.file, if any.
-        if (origFile) {
-            process.env.file = origFile;
-        } else {
-            delete process.env.file;
-        }
+        it('PropertyMock', async () => {
+            await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_PropertyMock');
+        });
     });
 
     it('SettingMock', async () => {
