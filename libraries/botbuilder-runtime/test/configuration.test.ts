@@ -4,6 +4,7 @@
 import assert from 'assert';
 import path from 'path';
 import { Configuration } from '../src/configuration';
+import { mochaExt } from 'botbuilder-test-utils';
 
 describe('Configuration', () => {
     const makeConfiguration = (files = ['base.json']) => {
@@ -11,10 +12,7 @@ describe('Configuration', () => {
 
         files.forEach((file) => configuration.file(path.join(__dirname, 'settings', file)));
 
-        configuration.argv(['--strings.argv', 'argv']);
-
-        process.env['strings__env'] = 'env';
-        configuration.env();
+        configuration.argv(['--strings.argv', 'argv']).env();
 
         return configuration;
     };
@@ -30,6 +28,10 @@ describe('Configuration', () => {
     });
 
     describe('strings', () => {
+        mochaExt.withEnvironment({
+            strings__env: 'env',
+        });
+
         it('works', () => {
             const strings = makeConfiguration().bind(['strings']);
 
