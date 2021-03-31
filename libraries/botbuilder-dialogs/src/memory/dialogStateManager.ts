@@ -11,7 +11,6 @@ import { ComponentPathResolvers, isComponentPathResolvers } from './componentPat
 import { ComponentRegistration } from 'botbuilder-core';
 import { DialogContext } from '../dialogContext';
 import { DialogPath } from './dialogPath';
-import { DialogsComponentRegistration } from '../dialogsComponentRegistration';
 import { MemoryScope } from './scopes';
 import { PathResolver } from './pathResolvers';
 
@@ -49,8 +48,6 @@ export class DialogStateManager {
      * @param configuration Configuration for the dialog state manager.
      */
     public constructor(dc: DialogContext, configuration?: DialogStateManagerConfiguration) {
-        ComponentRegistration.add(new DialogsComponentRegistration());
-
         this.dialogContext = dc;
         this.configuration = configuration ?? dc.context.turnState.get(DIALOG_STATE_MANAGER_CONFIGURATION);
 

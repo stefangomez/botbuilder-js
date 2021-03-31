@@ -70,11 +70,23 @@ export class SettingsMemoryScope extends MemoryScope {
             );
 
             dc.context.turnState.set(ScopePath.settings, settings);
-        } else if (this.initialSettings != null) {
-            settings = this.initialSettings;
         }
 
         return settings ?? {};
+    }
+
+    /**
+     * Loads a scopes backing memory at the start of a turn.
+     *
+     * @param dc Current dialog context.
+     * @returns a promise representing the async operation
+     */
+    public load(dc: DialogContext): Promise<void> {
+        if (this.initialSettings) {
+            dc.context.turnState.set(ScopePath.settings, this.initialSettings);
+        }
+
+        return super.load(dc);
     }
 
     /**

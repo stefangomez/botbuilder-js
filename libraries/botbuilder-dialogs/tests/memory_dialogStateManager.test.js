@@ -78,22 +78,16 @@ class TestContainer extends DialogContainer {
 }
 
 async function createConfiguredTestDc(storage) {
-    if (!storage) {
-        storage = new MemoryStorage();
-    }
-
     const dc = await createTestDc(storage);
     await dc.state.loadAllScopes();
 
     return dc;
 }
 
-async function createTestDc(storage) {
-    if (!storage) {
-        storage = new MemoryStorage();
-    }
+async function createTestDc(storage = new MemoryStorage()) {
     const convoState = new ConversationState(storage);
     const userState = new UserState(storage);
+
     // Create a DialogState property, DialogSet and register the dialogs.
     const dialogState = convoState.createProperty('dialogs');
     const dialogs = new DialogSet(dialogState);
@@ -112,11 +106,10 @@ async function createTestDc(storage) {
     return dc;
 }
 
-describe('Memory - Dialog State Manager', function () {
+describe.only('Memory - Dialog State Manager', function () {
     this.timeout(5000);
 
     let dc;
-
     before(async () => {
         dc = await createConfiguredTestDc();
     });
